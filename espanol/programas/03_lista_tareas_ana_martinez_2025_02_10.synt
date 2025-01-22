@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# Gestor de lista de tareas
+# Autor: Ana Martínez
+# Fecha: 2025-02-10
+
+# Lista global de tareas
+tareas = []
+
+definir agregar_tarea(descripcion, prioridad="normal"):
+    tarea = {
+        "descripcion": descripcion,
+        "prioridad": prioridad,
+        "completada": falso,
+        "fecha_creacion": "2025-02-10"
+    }
+    tareas.append(tarea)
+    imprimir(f"Tarea agregada: {descripcion}")
+
+definir mostrar_tareas():
+    si longitud(tareas) == 0:
+        imprimir("No hay tareas en la lista")
+        retornar
+    
+    imprimir("\n=== LISTA DE TAREAS ===")
+    para i, tarea en enumerate(tareas, 1):
+        estado = "✓" si tarea["completada"] sino "□"
+        imprimir(f"{i}. [{estado}] {tarea['descripcion']} - Prioridad: {tarea['prioridad']}")
+
+definir completar_tarea(indice):
+    si 1 <= indice <= longitud(tareas):
+        tareas[indice-1]["completada"] = verdadero
+        imprimir(f"Tarea {indice} marcada como completada")
+    sino:
+        imprimir("Índice de tarea no válido")
+
+definir eliminar_tarea(indice):
+    si 1 <= indice <= longitud(tareas):
+        tarea_eliminada = tareas.pop(indice-1)
+        imprimir(f"Tarea eliminada: {tarea_eliminada['descripcion']}")
+    sino:
+        imprimir("Índice de tarea no válido")
+
+definir menu_principal():
+    mientras verdadero:
+        imprimir("\n=== GESTOR DE TAREAS ===")
+        imprimir("1. Agregar tarea")
+        imprimir("2. Mostrar tareas")
+        imprimir("3. Completar tarea")
+        imprimir("4. Eliminar tarea")
+        imprimir("5. Salir")
+        
+        opcion = entrada("Elige una opción (1-5): ")
+        
+        si opcion == "1":
+            descripcion = entrada("Descripción de la tarea: ")
+            prioridad = entrada("Prioridad (alta/normal/baja): ")
+            agregar_tarea(descripcion, prioridad)
+        sino_si opcion == "2":
+            mostrar_tareas()
+        sino_si opcion == "3":
+            mostrar_tareas()
+            indice = entero(entrada("Índice de la tarea a completar: "))
+            completar_tarea(indice)
+        sino_si opcion == "4":
+            mostrar_tareas()
+            indice = entero(entrada("Índice de la tarea a eliminar: "))
+            eliminar_tarea(indice)
+        sino_si opcion == "5":
+            imprimir("¡Hasta luego!")
+            romper
+        sino:
+            imprimir("Opción no válida")
+
+# Agregar algunas tareas de ejemplo
+agregar_tarea("Estudiar Python", "alta")
+agregar_tarea("Hacer ejercicio", "normal")
+agregar_tarea("Leer un libro", "baja")
+
+# Ejecutar el programa
+si __name__ == "__main__":
+    menu_principal()
