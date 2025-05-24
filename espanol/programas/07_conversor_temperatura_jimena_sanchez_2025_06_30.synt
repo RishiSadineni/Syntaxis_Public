@@ -1,0 +1,112 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# Conversor de temperatura
+# Autor: Jimena Sánchez
+# Fecha: 2025-06-30
+
+definir celsius_a_fahrenheit(celsius):
+    retornar (celsius * 9/5) + 32
+
+definir fahrenheit_a_celsius(fahrenheit):
+    retornar (fahrenheit - 32) * 5/9
+
+definir celsius_a_kelvin(celsius):
+    retornar celsius + 273.15
+
+definir kelvin_a_celsius(kelvin):
+    retornar kelvin - 273.15
+
+definir fahrenheit_a_kelvin(fahrenheit):
+    celsius = fahrenheit_a_celsius(fahrenheit)
+    retornar celsius_a_kelvin(celsius)
+
+definir kelvin_a_fahrenheit(kelvin):
+    celsius = kelvin_a_celsius(kelvin)
+    retornar celsius_a_fahrenheit(celsius)
+
+definir convertir_temperatura(valor, unidad_origen, unidad_destino):
+    si unidad_origen == "C" y unidad_destino == "F":
+        retornar celsius_a_fahrenheit(valor)
+    sino_si unidad_origen == "F" y unidad_destino == "C":
+        retornar fahrenheit_a_celsius(valor)
+    sino_si unidad_origen == "C" y unidad_destino == "K":
+        retornar celsius_a_kelvin(valor)
+    sino_si unidad_origen == "K" y unidad_destino == "C":
+        retornar kelvin_a_celsius(valor)
+    sino_si unidad_origen == "F" y unidad_destino == "K":
+        retornar fahrenheit_a_kelvin(valor)
+    sino_si unidad_origen == "K" y unidad_destino == "F":
+        retornar kelvin_a_fahrenheit(valor)
+    sino:
+        retornar "Conversión no soportada"
+
+definir mostrar_ejemplos():
+    imprimir("\n=== EJEMPLOS DE CONVERSIÓN ===")
+    
+    # Celsius a Fahrenheit
+    c_temp = 25
+    f_temp = celsius_a_fahrenheit(c_temp)
+    imprimir(f"{c_temp}°C = {f_temp:.2f}°F")
+    
+    # Fahrenheit a Celsius
+    f_temp2 = 98.6
+    c_temp2 = fahrenheit_a_celsius(f_temp2)
+    imprimir(f"{f_temp2}°F = {c_temp2:.2f}°C")
+    
+    # Celsius a Kelvin
+    k_temp = celsius_a_kelvin(c_temp)
+    imprimir(f"{c_temp}°C = {k_temp:.2f}K")
+    
+    # Kelvin a Fahrenheit
+    f_temp3 = kelvin_a_fahrenheit(k_temp)
+    imprimir(f"{k_temp}K = {f_temp3:.2f}°F")
+
+definir menu_conversor():
+    imprimir("=== CONVERSOR DE TEMPERATURA ===")
+    imprimir("Unidades disponibles: C (Celsius), F (Fahrenheit), K (Kelvin)")
+    
+    mientras verdadero:
+        try:
+            imprimir("\n1. Convertir temperatura")
+            imprimir("2. Ver ejemplos")
+            imprimir("3. Salir")
+            
+            opcion = entrada("Elige una opción (1-3): ")
+            
+            si opcion == "1":
+                valor = flotante(entrada("Ingresa la temperatura: "))
+                unidad_origen = entrada("Unidad origen (C/F/K): ").upper()
+                unidad_destino = entrada("Unidad destino (C/F/K): ").upper()
+                
+                si unidad_origen en ["C", "F", "K"] y unidad_destino en ["C", "F", "K"]:
+                    resultado = convertir_temperatura(valor, unidad_origen, unidad_destino)
+                    si tipo(resultado) == cadena:
+                        imprimir(f"Error: {resultado}")
+                    sino:
+                        imprimir(f"{valor}°{unidad_origen} = {resultado:.2f}°{unidad_destino}")
+                sino:
+                    imprimir("Unidades no válidas. Usa C, F o K.")
+                    
+            sino_si opcion == "2":
+                mostrar_ejemplos()
+            sino_si opcion == "3":
+                imprimir("¡Hasta luego!")
+                romper
+            sino:
+                imprimir("Opción no válida")
+                
+        except ValueError:
+            imprimir("Error: Ingresa un número válido")
+        except Exception as e:
+            imprimir(f"Error: {e}")
+
+# Información sobre las escalas
+imprimir("Información sobre escalas de temperatura:")
+imprimir("- Celsius (°C): Escala métrica, 0°C = punto de congelación del agua")
+imprimir("- Fahrenheit (°F): Escala imperial, 32°F = punto de congelación del agua")
+imprimir("- Kelvin (K): Escala absoluta, 0K = cero absoluto")
+
+# Ejecutar el programa
+si __name__ == "__main__":
+    menu_conversor()
