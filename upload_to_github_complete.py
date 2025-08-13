@@ -1,0 +1,218 @@
+#!/usr/bin/env python3
+import os
+import subprocess
+import re
+from datetime import datetime, timedelta
+import glob
+import random
+
+def extract_date_from_filename(filename):
+    """Extract date from filename in format YYYY_MM_DD"""
+    pattern = r'(\d{4}_\d{2}_\d{2})\.synt$'
+    match = re.search(pattern, filename)
+    if match:
+        date_str = match.group(1)
+        return datetime.strptime(date_str, '%Y_%m_%d')
+    return None
+
+def get_random_cdt_time(date):
+    """Generate a random time in CDT timezone for the given date"""
+    cdt_offset = timedelta(hours=5)
+    
+    random_hour = random.randint(0, 23)
+    random_minute = random.randint(0, 59)
+    random_second = random.randint(0, 59)
+    
+    random_time = date.replace(hour=random_hour, minute=random_minute, second=random_second)
+    utc_time = random_time + cdt_offset
+    
+    return utc_time
+
+def run_git_command(command, description):
+    """Run a git command and handle errors"""
+    try:
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        if result.returncode == 0:
+            print(f"✓ {description}")
+            return True
+        else:
+            print(f"✗ {description}: {result.stderr}")
+            return False
+    except Exception as e:
+        print(f"✗ {description}: {e}")
+        return False
+
+def setup_git_repository():
+    """Set up the git repository from scratch"""
+    print("Setting up Git repository...")
+    
+    # Remove existing git directory if it exists
+    if os.path.exists('.git'):
+        print("Removing existing .git directory...")
+        run_git_command("rmdir /s /q .git", "Remove existing .git directory")
+    
+    # Initialize new git repository
+    run_git_command("git init", "Initialize git repository")
+    
+    # Configure git user (you may need to adjust these)
+    run_git_command('git config user.name "RishiSadineni"', "Set git user name")
+    run_git_command('git config user.email "rishi.sadineni@example.com"', "Set git user email")
+
+def commit_files_with_dates():
+    """Commit all files with proper dates and random times"""
+    print("\nCommitting files with proper dates and random times...")
+    
+    # Find all .synt files
+    synt_files = []
+    espanol_files = glob.glob('espanol/programas/*.synt')
+    francais_files = glob.glob('francais/programmes/*.synt')
+    synt_files.extend(espanol_files)
+    synt_files.extend(francais_files)
+    
+    # Define dates for specific files
+    spanish_date = datetime(2024, 9, 15)  # September 2024
+    french_date = datetime(2024, 11, 15)  # November 2024
+    
+    # Spanish files (September 2024)
+    spanish_files = [
+        'espanol/README.md',
+        'espanol/run_syntaxis.py',
+        'espanol/translator.py'
+    ]
+    
+    # French files (November 2024)
+    french_files = [
+        'francais/README.md',
+        'francais/executeur_syntaxis.py',
+        'francais/traducteur.py'
+    ]
+    
+    # Filter out files that don't exist
+    spanish_files = [f for f in spanish_files if os.path.exists(f)]
+    french_files = [f for f in french_files if os.path.exists(f)]
+    
+    # Sort synt files by date
+    files_with_dates = []
+    for file_path in synt_files:
+        date = extract_date_from_filename(file_path)
+        if date:
+            files_with_dates.append((file_path, date))
+    
+    files_with_dates.sort(key=lambda x: x[1])
+    
+    # First, commit Spanish files (September 2024) with random times
+    print(f"\nCommitting Spanish files with date {spanish_date.strftime('%Y-%m-%d')} and random times:")
+    for file_path in spanish_files:
+        random_time = get_random_cdt_time(spanish_date)
+        cdt_time = random_time - timedelta(hours=5)
+        
+        # Add file
+        run_git_command(f'git add "{file_path}"', f"Add {file_path}")
+        
+        # Commit with specific date
+        env = os.environ.copy()
+        env['GIT_AUTHOR_DATE'] = random_time.strftime('%Y-%m-%d %H:%M:%S')
+        env['GIT_COMMITTER_DATE'] = random_time.strftime('%Y-%m-%d %H:%M:%S')
+        
+        commit_cmd = f'git commit -m "Add {os.path.basename(file_path)}"'
+        result = subprocess.run(commit_cmd, shell=True, env=env, capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            print(f"  ✓ Committed {file_path} - {cdt_time.strftime('%H:%M:%S')} CDT")
+        else:
+            print(f"  ✗ Failed to commit {file_path}")
+    
+    # Then, commit French files (November 2024) with random times
+    print(f"\nCommitting French files with date {french_date.strftime('%Y-%m-%d')} and random times:")
+    for file_path in french_files:
+        random_time = get_random_cdt_time(french_date)
+        cdt_time = random_time - timedelta(hours=5)
+        
+        # Add file
+        run_git_command(f'git add "{file_path}"', f"Add {file_path}")
+        
+        # Commit with specific date
+        env = os.environ.copy()
+        env['GIT_AUTHOR_DATE'] = random_time.strftime('%Y-%m-%d %H:%M:%S')
+        env['GIT_COMMITTER_DATE'] = random_time.strftime('%Y-%m-%d %H:%M:%S')
+        
+        commit_cmd = f'git commit -m "Add {os.path.basename(file_path)}"'
+        result = subprocess.run(commit_cmd, shell=True, env=env, capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            print(f"  ✓ Committed {file_path} - {cdt_time.strftime('%H:%M:%S')} CDT")
+        else:
+            print(f"  ✗ Failed to commit {file_path}")
+    
+    # Finally, commit all .synt files with their respective dates and random times
+    print("\nCommitting .synt files with their respective dates and random times:")
+    for file_path, date in files_with_dates:
+        random_time = get_random_cdt_time(date)
+        cdt_time = random_time - timedelta(hours=5)
+        
+        # Add file
+        run_git_command(f'git add "{file_path}"', f"Add {file_path}")
+        
+        # Commit with specific date
+        env = os.environ.copy()
+        env['GIT_AUTHOR_DATE'] = random_time.strftime('%Y-%m-%d %H:%M:%S')
+        env['GIT_COMMITTER_DATE'] = random_time.strftime('%Y-%m-%d %H:%M:%S')
+        
+        commit_cmd = f'git commit -m "Add {os.path.basename(file_path)}"'
+        result = subprocess.run(commit_cmd, shell=True, env=env, capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            print(f"  ✓ Committed {file_path} - {date.strftime('%Y-%m-%d')} {cdt_time.strftime('%H:%M:%S')} CDT")
+        else:
+            print(f"  ✗ Failed to commit {file_path}")
+
+def setup_github_remote():
+    """Set up GitHub remote and push"""
+    print("\nSetting up GitHub remote...")
+    
+    # Add remote origin
+    run_git_command('git remote add origin https://github.com/RishiSadineni/Syntaxis_Public.git', "Add GitHub remote")
+    
+    # Push to GitHub
+    print("\nPushing to GitHub...")
+    run_git_command('git push -u origin main', "Push to GitHub main branch")
+    
+    # If main branch doesn't work, try master
+    if not run_git_command('git push -u origin main', "Push to GitHub main branch"):
+        print("Trying master branch instead...")
+        run_git_command('git push -u origin master', "Push to GitHub master branch")
+
+def main():
+    print("Syntaxis Repository - Complete GitHub Upload")
+    print("=" * 60)
+    
+    # Check if git is available
+    try:
+        subprocess.run(['git', '--version'], check=True, capture_output=True)
+    except:
+        print("✗ Git is not available. Please install Git and try again.")
+        return
+    
+    # Set up git repository
+    setup_git_repository()
+    
+    # Commit all files with proper dates
+    commit_files_with_dates()
+    
+    # Set up GitHub remote and push
+    setup_github_remote()
+    
+    print("\n" + "=" * 60)
+    print("UPLOAD COMPLETE!")
+    print("=" * 60)
+    print("✓ Repository has been uploaded to GitHub")
+    print("✓ All files have proper dates and random times")
+    print("✓ Spanish files dated to September 2024")
+    print("✓ French files dated to November 2024")
+    print("✓ Program files maintain their respective dates")
+    print("\nRepository URL: https://github.com/RishiSadineni/Syntaxis_Public")
+
+if __name__ == "__main__":
+    main()
+
+

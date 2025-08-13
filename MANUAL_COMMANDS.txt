@@ -1,0 +1,25 @@
+TO SET UP THE REPOSITORY WITH CORRECT DATES, RUN THESE COMMANDS IN ORDER:
+
+1. Open Command Prompt or PowerShell in the Syntaxis_new folder
+
+2. Run these commands one by one:
+
+   git reset --hard --empty
+   
+   python setup_dates.py
+   
+   git remote add origin https://github.com/RishiSadineni/Syntaxis_Public.git
+   
+   git push -u origin master
+
+3. Check your GitHub repository: https://github.com/RishiSadineni/Syntaxis_Public.git
+
+This will create the timeline:
+- September 2024: Spanish files (README, translator)
+- November 2024: French files (README, translator)  
+- December 2024 - July 2025: All programs with their respective dates
+
+ALTERNATIVE: Double-click setup_dates.bat to run the setup automatically.
+
+
+
